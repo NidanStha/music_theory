@@ -7,10 +7,17 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 40px;
+    padding: 6px 40px;
     border-bottom: 2px solid #4C4D5A;
     background-color: #E2E2E2;
   }
+
+  .logo img {
+  width: 60px;   /* change size as you want */
+  height: auto;   /* keeps proper aspect ratio */
+  display: block; /* removes small gaps */
+}
+
   .logo {
     font-size: 28px;
     font-weight: bold;
