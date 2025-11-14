@@ -1,6 +1,7 @@
   body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: "Lato", Arial, sans-serif;
+    
   }
   .header {
     display: flex;
@@ -66,23 +67,12 @@
     width: 100%;
   }
 
-
-
-  /* Basic Page Setup */
-body {
-  font-family: "Georgia", serif;
-  line-height: 1.6;
-  margin: 0;
-  padding: 0;
-  background: #ffffff;
-  color: #222;
-}
-
 /* Center the entire content width like screenshot */
 .content {
   width: 100%;
   margin: 0 auto;
   text-align: left;
+  
 }
 
 /* Main Title */
@@ -150,3 +140,22 @@ section {
   width: 80%;
   margin: 0 auto;
 }
+
+
+.guitar-tab {
+  background: #f1f1f1;
+  color: #000000;
+  padding: 20px;
+  border-radius: 10px;
+  white-space: pre;
+  font-family: "Courier New", monospace;
+  font-size: 15px;
+  line-height: 1.2;
+
+  /* NEW: Center + auto width */
+  display: inline-block;
+  margin: 20px auto;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
