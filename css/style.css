@@ -1,0 +1,152 @@
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    border-bottom: 2px solid #4C4D5A;
+    background-color: #E2E2E2;
+  }
+  .logo {
+    font-size: 28px;
+    font-weight: bold;
+  }
+  .nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: black;
+    font-size: 18px;
+    padding: 6px 10px;
+    border-radius: 4px;
+  }
+  .nav a:hover {
+    color: white;
+    background-color: #8F8799;
+  }
+  .container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  h1 {
+    margin-bottom: 20px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+  }
+  thead tr {
+    background-color: #EDEDED;
+    border-bottom: 1px solid #ccc;
+  }
+  tbody tr {
+    background-color: #FAFAFA;
+    border-bottom: 1px solid #eee;
+  }
+  table th, table td {
+    padding: 12px;
+    text-align: left;
+    font-size: 15px;
+  }
+  
+  tbody tr:hover {
+    background-color: #F0F0F0;
+  }
+  tbody tr:hover td {
+    color: #7550A6;
+  }
+  tbody tr td a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    width: 100%;
+  }
+
+
+
+  /* Basic Page Setup */
+body {
+  font-family: "Georgia", serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  color: #222;
+}
+
+/* Center the entire content width like screenshot */
+.content {
+  width: 100%;
+  margin: 0 auto;
+  text-align: left;
+}
+
+/* Main Title */
+.content h1 {
+  text-align: center;
+  font-size: 2.4rem;
+  margin-top: 40px;
+  margin-bottom: 10px;
+}
+
+/* Section Title */
+.content h2 {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 1.8rem;
+}
+
+/* Paragraph styling like screenshot */
+.content p {
+  text-indent: 30px;
+  margin: 18px auto;
+  font-size: 1.1rem;
+  width: 100%;
+}
+
+/* Navigation Buttons */
+.nav-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 25px;
+  margin-bottom: 20px;
+}
+
+.nav-btn {
+  padding: 8px 16px;
+  font-size: 1rem;
+  border: 1px solid #888;
+  background: #f5f5f5;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: 0.2s;
+  text-decoration: none;
+  color: black;
+  display: inline-block;
+}
+
+.nav-btn:hover {
+  background: #e0e0e0;
+}
+
+
+/* Highlight Box (light blue bar) */
+.highlight-box {
+  background: #e4e9ff;
+  border-left: 12px solid #7385ff;
+  padding: 18px 20px;
+  margin: 25px auto;
+  width: 100%;
+  font-size: 1.15rem;
+}
+
+/* Optional section wrapper if added */
+section {
+  width: 80%;
+  margin: 0 auto;
+}
