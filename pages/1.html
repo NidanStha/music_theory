@@ -9,17 +9,19 @@
 <body>
   <!-- NAV BAR -->
   <div class="header">
-    <div class="logo">golo LOGO</div>
+    <div class="logo">
+      <img src="../images/logo.png" alt="Logo">
+    </div>
     <div class="nav">
-      <a href="index.html">Guitar</a>
-      <a href="#">Vocal</a>
+      <a href="1.html">Guitar</a>
+      <a href="comming-soon.html">Vocal</a>
     </div>
   </div>
 
   <!-- NAVIGATION BUTTONS -->
   <div class="nav-buttons">
     <a href="prev.html" class="nav-btn">← Prev</a>
-    <a href="index.html" class="nav-btn">Index</a>
+    <a href="../index.html" class="nav-btn">Index</a>
     <a href="2.html" class="nav-btn">Next →</a>
   </div>
 
@@ -28,20 +30,62 @@
   <section class="main-section">
     <div class="content">
       <h1>Introduction</h1>
-      <h2>Why Should You Learn Music Theory?</h2>
+      <h2>Guitar Overview</h2>
 
       <p>
-        There are world-class guitar virtuosos who know little of music theory. Many new guitar players who see strange diagrams or dots and lines don’t believe these to be relevant. Amateur players often reject music theory as useless.
+        Strings name: E, A, D, G, B, e
       </p>
 
       <div class="highlight-box">
-        The study of music theory is not optional; it is necessary.
+        Generally, 6 wota string lai number wise herda 1 number ko string saab bhanda patalo string ho bhane mathi ko baklo string chai 6 number ko string ho.
       </div>
 
+      <h3>Chords</h3>
       <p>
-        All musicians develop systems to understand how music works. These systems can be formal or informal. As soon as a musician begins to interact with others, having shared understanding becomes important.
+        Chord bhaneko two or more that two notes milera baneko huncha. Chord ko dherai wota types huncha, for example: major chord, minor chord, seventh chord, etc.
       </p>
+      <h2>Major Chords</h2>
+        <div class="chord-grid">
+          <div class="chord-box" onclick="toggleMagnify(this)">
+            <h3>C Major</h3>
+            <img src="../images/C.png" alt="C Major Chord" />
+          </div>
+
+
+          <div class="chord-box" onclick="toggleMagnify(this)">
+            <h3>D Major</h3>
+            <img src="../images/D.png" alt="D Major Chord" />
+          </div>
+
+
+        <div class="chord-box" onclick="toggleMagnify(this)">
+            <h3>E Major</h3>
+            <img src="../images/E.png" alt="E Major Chord" />
+        </div>
+
+        <div class="chord-box" onclick="toggleMagnify(this)">
+            <h3>F Major</h3>
+            <img src="../images/F.png" alt="C Major Chord" />
+          </div>
+
+
+          <div class="chord-box" onclick="toggleMagnify(this)">
+            <h3>G Major</h3>
+            <img src="../images/G.png" alt="D Major Chord" />
+          </div>
+
+
+        <div class="chord-box" onclick="toggleMagnify(this)">
+            <h3>A Major</h3>
+            <img src="../images/A.png" alt="E Major Chord" />
+        </div>
+
+        <div class="chord-box" onclick="toggleMagnify(this)">
+            <h3>B Major</h3>
+            <img src="../images/B.png" alt="E Major Chord" />
+        </div>
     </div>
+    <!--
     <pre class="guitar-tab">
 e|-0------------------------------|--------------------------------|--------------------------------|--------------------------------|
 B|---0----------------------------|--------------------------------|--------------------------------|--------------------------------|
@@ -49,8 +93,15 @@ G|-------0------------------------|--------------------------------|------------
 D|---------0----------------------|--------------------------------|--------------------------------|--------------------------------|
 A|-----------0--------------------|--------------------------------|--------------------------------|--------------------------------|
 E|-------------0------------------|--------------------------------|--------------------------------|--------------------------------|
-    </pre>
+    </pre>-->
   </section>
 
+
+  <script>
+    function toggleMagnify(box) {
+    const img = box.querySelector('img');
+    img.classList.toggle('magnify');
+    }
+</script>
 </body>
 </html>

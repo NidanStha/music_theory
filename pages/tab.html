@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Guitar Tab Component</title>
+  <style>
+    :root{--cell-width:40px;--cell-height:30px}
+    body{font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; padding:20px; background:#f6f7fb; color:#111}
+    h1{font-size:18px;margin:0 0 12px}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    button{background:#2b6cb0;color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer}
+    button.ghost{background:transparent;color:#2b6cb0;border:1px solid #bee3f8}
+    .container{background:#fff;padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(20,20,50,0.06)}
+
+    .tab-grid{overflow:auto}
+    table.tab{border-collapse:collapse;font-family:monospace}
+    td.string-name{padding:0 8px;text-align:right;font-weight:600;vertical-align:middle}
+    td.cell{width:var(--cell-width);height:var(--cell-height);text-align:center;vertical-align:middle;border-bottom:2px solid #cbd5e1;padding:0;position:relative}
+    td.cell:focus{outline:2px solid #90cdf4}
+    td.cell input{width:100%;height:100%;border:0;background:transparent;text-align:center;font:600 14px/30px monospace}
+
+    /* measure markers: every 4th column gets a thicker right border */
+    td.cell.measure-end{border-right:4px solid #cbd5e1}
+
+    .controls{display:flex;gap:8px;align-items:center;margin-top:8px}
+
+    .kbd{display:inline-grid;grid-template-columns:repeat(6,1fr);gap:6px}
+    .kbd button{background:#edf2ff;color:#2b6cb0;padding:6px;border-radius:6px;font-weight:700}
+
+    .output{margin-top:12px}
+    textarea{width:100%;height:160px;padding:10px;border-radius:8px;border:1px solid #e2e8f0;font-family:monospace}
+
+    .small{font-size:13px;color:#374151}
+  </style>
+</head>
+<body>
+  <h1>Guitar Tab — interactive editor</h1>
+  <div class="toolbar">
+    <button id="addMeasure">+ Add measure</button>
+    <button id="removeMeasure" class="ghost">- Remove measure</button>
+    <button id="clearAll" class="ghost">Clear</button>
+    <button id="exportTxt">Export as tab text</button>
+    <button id="copyBtn">Copy to clipboard</button>
+    <div style="margin-left:auto" class="small">Double‑click a cell to edit. Use keypad to insert frets quickly.</div>
+  </div>
+
+  <div class="container">
+    <div class="tab-grid">
+      <table class="tab" id="tabTable"></table>
+    </div>
+
+    <div class="controls">
+      <div>
+        <div class="small">Quick fret keypad</div>
+        <div class="kbd" id="fretPad">
+          <!-- numbers inserted by JS -->
+        </div>
+      </div>
+      <div style="margin-left:12px">
+        <div class="small">Add strings / tuning</div>
+        <select id="tuningSelect">
+          <option value="EADGBE">Standard (E A D G B E)</option>
+          <option value="DADGBE">Drop D</option>
+          <option value="CGCFAD">Open C</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="output">
+      <div class="small">Generated tab (plain text)</div>
+      <textarea id="tabOutput" readonly></textarea>
+    </div>
+  </div>
+
+  <script>
+    // Basic interactive tab editor
+    const stringsDefault = ['e','B','G','D','A','E']; // top-to-bottom (high e first)
+    let strings = [...stringsDefault];
+    let measures = 4;
+    let divisionsPerMeasure = 16; // columns per measure (smaller value => wider cells)
+
+    const tabTable = document.getElementById('tabTable');
+    const tabOutput = document.getElementById('tabOutput');
+    const addMeasure = document.getElementById('addMeasure');
+    const removeMeasure = document.getElementById('removeMeasure');
+    const exportTxt = document.getElementById('exportTxt');
+    const copyBtn = document.getElementById('copyBtn');
+    const clearAll = document.getElementById('clearAll');
+    const fretPad = document.getElementById('fretPad');
+    const tuningSelect = document.getElementById('tuningSelect');
+
+    // model: 2D array rows=strings, cols = measures * divisionsPerMeasure
+    let grid = [];
+
+    function initGrid(){
+      const cols = measures * divisionsPerMeasure;
+      grid = [];
+      for(let r=0;r<strings.length;r++){
+        const row = new Array(cols).fill('');
+        grid.push(row);
+      }
+    }
+
+    function buildTable(){
+      tabTable.innerHTML = '';
+      const cols = measures * divisionsPerMeasure;
+
+      strings.forEach((s, r)=>{
+        const tr = document.createElement('tr');
+        const nameTd = document.createElement('td');
+        nameTd.className = 'string-name';
+        nameTd.textContent = s;
+        tr.appendChild(nameTd);
+
+        for(let c=0;c<cols;c++){
+          const td = document.createElement('td');
+          td.className = 'cell';
+          // mark measure-end columns
+          if((c+1)%divisionsPerMeasure === 0) td.classList.add('measure-end');
+          td.dataset.r = r; td.dataset.c = c;
+
+          const val = grid[r][c];
+          td.textContent = val || '-';
+          td.addEventListener('dblclick', onEditCell);
+          td.addEventListener('click', onCellClick);
+          tr.appendChild(td);
+        }
+
+        tabTable.appendChild(tr);
+      });
+
+      updateOutput();
+    }
+
+    function onEditCell(e){
+      const td = e.currentTarget;
+      const r = +td.dataset.r; const c = +td.dataset.c;
+      // create input
+      td.innerHTML = '';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.maxLength = 3;
+      input.value = grid[r][c] || '';
+      td.appendChild(input);
+      input.focus();
+      input.select();
+      input.addEventListener('blur', ()=>{ saveInput(r,c,input.value); });
+      input.addEventListener('keydown', (ev)=>{
+        if(ev.key === 'Enter'){ input.blur(); }
+        if(ev.key === 'Escape'){ input.value = grid[r][c] || ''; input.blur(); }
+      });
+    }
+
+    function onCellClick(e){
+      // If there's an active keypad selection, insert that value
+      if(selectedPad !== null){
+        const td = e.currentTarget;
+        const r = +td.dataset.r; const c = +td.dataset.c;
+        saveInput(r,c,selectedPad);
+      }
+    }
+
+    function saveInput(r,c,val){
+      val = (''+val).trim();
+      // normalize empty or hyphen => empty
+      if(val === '' || val === '-') grid[r][c] = '';
+      else grid[r][c] = val;
+      buildTable();
+    }
+
+    // generate fret keypad
+    let selectedPad = null;
+    function buildFretPad(){
+      fretPad.innerHTML = '';
+      const pads = ["0","1","2","3","4","5","6","7","8","9","10","12","15","17","19","22"];
+      pads.forEach(p=>{
+        const btn = document.createElement('button');
+        btn.textContent = p;
+        btn.addEventListener('click', ()=>{
+          // toggle
+          if(selectedPad === p){ selectedPad = null; btn.style.background = ''; }
+          else{ selectedPad = p; // highlight all buttons accordingly
+            Array.from(fretPad.children).forEach(ch=>ch.style.background='');
+            btn.style.background = '#c7e7ff';
+          }
+        });
+        fretPad.appendChild(btn);
+      });
+    }
+
+    function exportAsText(){
+      // produce classic tab: each string line e|--0--2--|
+      const cols = measures * divisionsPerMeasure;
+      let lines = [];
+      for(let r=0;r<strings.length;r++){
+        let line = strings[r] + '|';
+        for(let c=0;c<cols;c++){
+          const val = grid[r][c];
+          if(val === '' || val === null){
+            line += '--';
+          } else {
+            // place fret number padded
+            if(val.length === 1) line += '-' + val;
+            else if(val.length === 2) line += val;
+            else { // 3+ chars
+              // fallback: trim
+              line += val.slice(0,2);
+            }
+          }
+          // add measure separator
+          if((c+1)%divisionsPerMeasure === 0) line += '|';
+        }
+        lines.push(line);
+      }
+      return lines.join('\n');
+    }
+
+    function updateOutput(){
+      tabOutput.value = exportAsText();
+    }
+
+    // UI button handlers
+    addMeasure.addEventListener('click', ()=>{ measures++; initGrid(); buildTable(); });
+    removeMeasure.addEventListener('click', ()=>{ if(measures>1){ measures--; initGrid(); buildTable(); }});
+    clearAll.addEventListener('click', ()=>{ initGrid(); buildTable(); });
+    exportTxt.addEventListener('click', ()=>{ updateOutput(); alert('Tab updated in the text area below — you can copy or download.'); });
+    copyBtn.addEventListener('click', async ()=>{ updateOutput(); try{ await navigator.clipboard.writeText(tabOutput.value); alert('Copied to clipboard'); }catch(e){ alert('Copy failed — select and copy manually.'); } });
+
+    tuningSelect.addEventListener('change', (e)=>{
+      const val = e.target.value; // like EADGBE
+      strings = val.split('').reverse(); // store top-to-bottom as high->low
+      // convert letters to full names for clarity: we keep single letters lowercased
+      strings = strings.map(ch => ch.toLowerCase());
+      initGrid(); buildTable();
+    });
+
+    // initialize
+    initGrid(); buildFretPad(); buildTable();
+
+    // allow saving cell by clicking number buttons as well (selectedPad variable used)
+    // update output on any click that changes grid
+    document.addEventListener('click', ()=>{ updateOutput(); });
+
+    // helper: allow keyboard numbers to type into last focused cell
+    let lastFocusedCell = null;
+    tabTable.addEventListener('focusin', (ev)=>{ if(ev.target.tagName === 'TD') lastFocusedCell = ev.target; }, true);
+
+    // accessibility: allow tab navigation
+    Array.from(document.getElementsByClassName('cell')).forEach(c=>c.tabIndex=0);
+
+  </script>
+</body>
+</html>
