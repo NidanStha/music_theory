@@ -105,6 +105,23 @@
   width: 100%;
 }
 
+.intro-img-box {
+  text-align: center;
+  background: none;
+  box-shadow: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.intro-img-box img {
+  width: 250px !important;   /* Keep small size */
+  max-width: 90%;
+  border-radius: 10px;
+  transition: transform 0.25s ease;
+}
+
+
+
 /* Navigation Buttons */
 .nav-buttons {
   display: flex;
